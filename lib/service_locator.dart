@@ -5,7 +5,7 @@ import 'package:notes_app_rxvms/managers/app_manager.dart';
 GetIt sl = GetIt.instance;
 
 void setUpServiceLocator() {
-  //Register Lushitrap Seivise
+  //Register Database Service
   sl.registerLazySingleton<DatabaseHelper>(
       () => DatabaseHelperImplementation());
 
