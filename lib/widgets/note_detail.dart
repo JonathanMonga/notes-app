@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:notes_app/db_helper/db_helper.dart';
-import 'package:notes_app/modal_class/notes.dart';
 import 'package:notes_app_rxvms/data/models/note.dart';
 import 'package:notes_app_rxvms/data/services/db_helper/db_helper.dart';
+import 'package:notes_app_rxvms/managers/app_manager.dart';
+import 'package:notes_app_rxvms/service_locator.dart';
 import 'package:notes_app_rxvms/utils/widgets.dart';
 
 class NoteDetail extends StatefulWidget {
@@ -19,8 +19,6 @@ class NoteDetail extends StatefulWidget {
 }
 
 class NoteDetailState extends State<NoteDetail> {
-  DatabaseHelper helper = DatabaseHelper();
-
   String appBarTitle;
   Note note;
   TextEditingController titleController = TextEditingController();
@@ -264,14 +262,14 @@ class NoteDetailState extends State<NoteDetail> {
     note.date = DateFormat.yMMMd().format(DateTime.now());
 
     if (note.id != null) {
-      await helper.updateNote(note);
+      sl.get<AppManager>().updateNoteCommand(note);
     } else {
-      await helper.insertNote(note);
+      sl.get<AppManager>().insertNoteCommand(note);
     }
   }
 
   void _delete() async {
-    await helper.deleteNote(note.id);
+    sl.get<AppManager>().deleteNoteCommand(note);
     moveToLastScreen();
   }
 }
