@@ -14,8 +14,8 @@ This is a note taking app made with flutter.<br>
 ## Credits.
 
 <ul>
-<li>**[@Bibek Timsina](https://github.com/bimsina)** for notes app</li>
-<li>**[@Thomas Burkhart](https://github.com/escamoteur)** for RxVMS architecture</li>
+<li>[@Bibek Timsina] (https://github.com/bimsina) for notes app</li>
+<li>[@Thomas Burkhart] (https://github.com/escamoteur) for RxVMS architecture</li>
 </ul>
 
 ## Find the app on Google Play
