@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:notes_app_rxvms/data/models/note.dart';
+import 'package:notes_app_rxvms/data/services/db_helper/db_helper.dart';
+import 'package:notes_app_rxvms/service_locator.dart';
 import 'package:rx_command/rx_command.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -19,7 +21,6 @@ abstract class AppManager {
 }
 
 class AppManagerImplementation implements AppManager {
-
   @override
   RxCommand<Note, int> deleteNoteCommand;
 
@@ -31,6 +32,9 @@ class AppManagerImplementation implements AppManager {
 
   @override
   RxCommand<void, List<Map<String, dynamic>>> getNoteMapListCommand;
+
+  @override
+  RxCommand<String, String> updateSearchStringCommand;
 
   @override
   RxCommand<Note, int> insertNoteCommand;
@@ -53,23 +57,32 @@ class AppManagerImplementation implements AppManager {
   }
 
   AppManagerImplementation() {
+    getNoteMapListCommand =
+        RxCommand.createAsyncNoParam<List<Map<String, dynamic>>>(
+            () async => sl.get<DatabaseHelper>().getNoteMapList(),
+            emitLastResult: true);
 
-    loadSongsCommand = RxCommand.createAsyncNoParam<List<Song>>(
-        () async => sl.get<LushitrapService>().loadSongs(),
+    getNoteListCommand = RxCommand.createAsyncNoParam<List<Note>>(
+        () async => sl.get<DatabaseHelper>().getNoteList(),
         emitLastResult: true);
 
-    loadSongsCommand.execute();
+    updateNoteCommand = RxCommand.createAsync<Note, int>(
+        (note) async => sl.get<DatabaseHelper>().updateNote(note));
+
+    insertNoteCommand = RxCommand.createAsync<Note, int>(
+        (note) async => sl.get<DatabaseHelper>().updateNote(note));
+
+    deleteNoteCommand = RxCommand.createAsync<Note, int>(
+        (note) async => sl.get<DatabaseHelper>().updateNote(note));
+
+    getCountCommand = RxCommand.createAsyncNoParam<int>(
+        () async => sl.get<DatabaseHelper>().getCount());
 
     updateSearchStringCommand = RxCommand.createSync((s) => s);
   }
 
   Future init() async {
-    updateSearchStringCommand.results.listen(print);
-
-    loadSongsCommand.results.listen((data) => print(
-        "Has data: ${data.hasData}  has error:   ${data.hasError}, ${data.isExecuting}"));
+    sl.get<DatabaseHelper>().initializeDatabase();
+    getNoteListCommand.execute();
   }
-
-  @override
-  RxCommand<String, String> updateSearchStringCommand;
 }

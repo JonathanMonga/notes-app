@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notes_app_rxvms/widgets/note_list.dart';
 
 class MainPage extends StatelessWidget {
   @override
