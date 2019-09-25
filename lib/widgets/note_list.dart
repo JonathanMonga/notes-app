@@ -30,7 +30,7 @@ class NoteListState extends State<NoteList> {
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.white,
-        leading: notes.length == 0
+        leading: notes?.length == 0
             ? Container()
             : IconButton(
                 icon: Icon(
@@ -46,7 +46,7 @@ class NoteListState extends State<NoteList> {
                 },
               ),
         actions: <Widget>[
-          notes.length == 0
+          notes?.length == 0
               ? Container()
               : IconButton(
                   icon: Icon(
@@ -69,48 +69,47 @@ class NoteListState extends State<NoteList> {
         builder: (BuildContext context,
             AsyncSnapshot<CommandResult<List<Note>>> snapshot) {
           if (snapshot.hasData) {
-            return Scaffold(
-              appBar: myAppBar(snapshot.data.data),
-              body: snapshot.data.data.length == 0
-                  ? Container(
-                      color: Colors.white,
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                              'Click on the add button to add a new note!',
-                              style: Theme.of(context).textTheme.body1),
-                        ),
+            List<Note> notes = snapshot.data.data;
+            if (notes != null) {
+              return Scaffold(
+                appBar: myAppBar(snapshot.data.data),
+                body: snapshot.data.data.length == 0
+                    ? _buildInitialMessage()
+                    : Container(
+                        color: Colors.white,
+                        child: getNotesList(snapshot.data.data),
                       ),
-                    )
-                  : Container(
-                      color: Colors.white,
-                      child: getNotesList(snapshot.data.data),
-                    ),
-              floatingActionButton: FloatingActionButton(
-                onPressed: () {
-                  navigateToDetail(Note('', '', 3, 0), 'Add Note');
-                },
-                tooltip: 'Add Note',
-                shape: CircleBorder(
-                    side: BorderSide(color: Colors.black, width: 2.0)),
-                child: Icon(Icons.add, color: Colors.black),
-                backgroundColor: Colors.white,
-              ),
-            );
-          } else {
-            return Container(
-              color: Colors.white,
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text('Click on the add button to add a new note!',
-                      style: Theme.of(context).textTheme.body1),
+                floatingActionButton: FloatingActionButton(
+                  onPressed: () {
+                    navigateToDetail(Note('', '', 3, 0), 'Add Note');
+                  },
+                  tooltip: 'Add Note',
+                  shape: CircleBorder(
+                      side: BorderSide(color: Colors.black, width: 2.0)),
+                  child: Icon(Icons.add, color: Colors.black),
+                  backgroundColor: Colors.white,
                 ),
-              ),
-            );
+              );
+            } else {
+              return _buildInitialMessage();
+            }
+          } else {
+            return _buildInitialMessage();
           }
         });
+  }
+
+  Widget _buildInitialMessage() {
+    return Container(
+      color: Colors.white,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text('Click on the add button to add a new note!',
+              style: Theme.of(context).textTheme.body1),
+        ),
+      ),
+    );
   }
 
   Widget getNotesList(List<Note> notes) {
