@@ -30,7 +30,7 @@ class AppManagerImplementation implements AppManager {
   RxCommand<void, List<Note>> getNoteListCommand;
 
   @override
-  RxCommand<void, List<Map<String, >>> getNoteMapListCommand;
+  RxCommand<void, List<Map<String, dynamic>>> getNoteMapListCommand;
 
   @override
   RxCommand<Note, int> insertNoteCommand;
@@ -53,7 +53,7 @@ class AppManagerImplementation implements AppManager {
   }
 
   AppManagerImplementation() {
-    
+
     loadSongsCommand = RxCommand.createAsyncNoParam<List<Song>>(
         () async => sl.get<LushitrapService>().loadSongs(),
         emitLastResult: true);
