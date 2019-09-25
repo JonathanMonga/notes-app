@@ -9,7 +9,6 @@ abstract class DatabaseHelper {
   Future<Database> get database;
 
   Future<Database> initializeDatabase();
-  Future<List<Map<String, dynamic>>> getNoteMapList();
   Future<int> insertNote(Note note);
   Future<int> updateNote(Note note);
   Future<int> deleteNote(int id);
@@ -66,8 +65,7 @@ class DatabaseHelperImplementation implements DatabaseHelper {
   }
 
   // Fetch Operation: Get all note objects from database
-  @override
-  Future<List<Map<String, dynamic>>> getNoteMapList() async {
+  Future<List<Map<String, dynamic>>> _getNoteMapList() async {
     Database db = await this.database;
 
     // var result = await db.rawQuery('SELECT * FROM $noteTable order by $colPriority ASC');
@@ -114,7 +112,7 @@ class DatabaseHelperImplementation implements DatabaseHelper {
   // Get the 'Map List' [ List<Map> ] and convert it to 'Note List' [ List<Note> ]
   @override
   Future<List<Note>> getNoteList() async {
-    var noteMapList = await getNoteMapList(); // Get 'Map List' from database
+    var noteMapList = await _getNoteMapList(); // Get 'Map List' from database
     int count =
         noteMapList.length; // Count the number of map entries in db table
 

@@ -7,7 +7,6 @@ import 'package:rx_command/rx_command.dart';
 import 'package:rxdart/rxdart.dart';
 
 abstract class AppManager {
-  RxCommand<void, List<Map<String, dynamic>>> getNoteMapListCommand;
   RxCommand<Note, int> insertNoteCommand;
   RxCommand<Note, int> updateNoteCommand;
   RxCommand<Note, int> deleteNoteCommand;
@@ -29,9 +28,6 @@ class AppManagerImplementation implements AppManager {
 
   @override
   RxCommand<void, List<Note>> getNoteListCommand;
-
-  @override
-  RxCommand<void, List<Map<String, dynamic>>> getNoteMapListCommand;
 
   @override
   RxCommand<String, String> updateSearchStringCommand;
@@ -57,11 +53,6 @@ class AppManagerImplementation implements AppManager {
   }
 
   AppManagerImplementation() {
-    getNoteMapListCommand =
-        RxCommand.createAsyncNoParam<List<Map<String, dynamic>>>(
-            () async => sl.get<DatabaseHelper>().getNoteMapList(),
-            emitLastResult: true);
-
     getNoteListCommand = RxCommand.createAsyncNoParam<List<Note>>(
         () async => sl.get<DatabaseHelper>().getNoteList(),
         emitLastResult: true);
@@ -79,10 +70,26 @@ class AppManagerImplementation implements AppManager {
         () async => sl.get<DatabaseHelper>().getCount());
 
     updateSearchStringCommand = RxCommand.createSync((s) => s);
+
+    updateNoteCommand.listen((onData) {
+      getNoteListCommand.execute();
+    });
+
+    insertNoteCommand.listen((onData) {
+      getNoteListCommand.execute();
+    });
+
+    deleteNoteCommand.listen((onData) {
+      getNoteListCommand.execute();
+    });
   }
 
   Future init() async {
     sl.get<DatabaseHelper>().initializeDatabase();
-    getNoteListCommand.execute();
+    
+    getNoteListCommand();
+
+    getNoteListCommand
+        .listen((onData) => onData.forEach((data) => print(data.title)));
   }
 }
