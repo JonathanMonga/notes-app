@@ -4,6 +4,7 @@ import 'package:notes_app/modal_class/notes.dart';
 class NotesSearch extends SearchDelegate<Note> {
   final List<Note> notes;
   List<Note> filteredNotes = [];
+  
   NotesSearch({this.notes});
 
   @override

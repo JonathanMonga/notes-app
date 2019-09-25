@@ -5,7 +5,19 @@ import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 import 'package:path_provider/path_provider.dart';
 
-class DatabaseHelper {
+abstract class DatabaseHelper {
+  Future<Database> get database;
+
+  Future<Database> initializeDatabase();
+  Future<List<Map<String, dynamic>>> getNoteMapList();
+  Future<int> insertNote(Note note);
+  Future<int> updateNote(Note note);
+  Future<int> deleteNote(int id);
+  Future<int> getCount();
+  Future<List<Note>> getNoteList();
+}
+
+class DatabaseHelperImplementation implements DatabaseHelper {
   static DatabaseHelper _databaseHelper; // Singleton DatabaseHelper
   static Database _database; // Singleton Database
 
@@ -17,16 +29,17 @@ class DatabaseHelper {
   String colColor = 'color';
   String colDate = 'date';
 
-  DatabaseHelper._createInstance(); // Named constructor to create instance of DatabaseHelper
+  DatabaseHelperImplementation._createInstance(); // Named constructor to create instance of DatabaseHelper
 
-  factory DatabaseHelper() {
+  factory DatabaseHelperImplementation() {
     if (_databaseHelper == null) {
-      _databaseHelper = DatabaseHelper
+      _databaseHelper = DatabaseHelperImplementation
           ._createInstance(); // This is executed only once, singleton object
     }
     return _databaseHelper;
   }
 
+  @override
   Future<Database> get database async {
     if (_database == null) {
       _database = await initializeDatabase();
@@ -34,6 +47,7 @@ class DatabaseHelper {
     return _database;
   }
 
+  @override
   Future<Database> initializeDatabase() async {
     // Get the directory path for both Android and iOS to store database.
     Directory directory = await getApplicationDocumentsDirectory();
@@ -52,15 +66,17 @@ class DatabaseHelper {
   }
 
   // Fetch Operation: Get all note objects from database
+  @override
   Future<List<Map<String, dynamic>>> getNoteMapList() async {
     Database db = await this.database;
 
-//		var result = await db.rawQuery('SELECT * FROM $noteTable order by $colPriority ASC');
+    // var result = await db.rawQuery('SELECT * FROM $noteTable order by $colPriority ASC');
     var result = await db.query(noteTable, orderBy: '$colPriority ASC');
     return result;
   }
 
   // Insert Operation: Insert a Note object to database
+  @override
   Future<int> insertNote(Note note) async {
     Database db = await this.database;
     var result = await db.insert(noteTable, note.toMap());
@@ -68,6 +84,7 @@ class DatabaseHelper {
   }
 
   // Update Operation: Update a Note object and save it to database
+  @override
   Future<int> updateNote(Note note) async {
     var db = await this.database;
     var result = await db.update(noteTable, note.toMap(),
@@ -76,6 +93,7 @@ class DatabaseHelper {
   }
 
   // Delete Operation: Delete a Note object from database
+  @override
   Future<int> deleteNote(int id) async {
     var db = await this.database;
     int result =
@@ -84,6 +102,7 @@ class DatabaseHelper {
   }
 
   // Get number of Note objects in database
+  @override
   Future<int> getCount() async {
     Database db = await this.database;
     List<Map<String, dynamic>> x =
@@ -93,6 +112,7 @@ class DatabaseHelper {
   }
 
   // Get the 'Map List' [ List<Map> ] and convert it to 'Note List' [ List<Note> ]
+  @override
   Future<List<Note>> getNoteList() async {
     var noteMapList = await getNoteMapList(); // Get 'Map List' from database
     int count =
