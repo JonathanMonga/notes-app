@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notes_app/modal_class/notes.dart';
+import 'package:notes_app_rxvms/data/models/note.dart';
 
 class NotesSearch extends SearchDelegate<Note> {
   final List<Note> notes;
