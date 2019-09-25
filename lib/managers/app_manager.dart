@@ -61,10 +61,10 @@ class AppManagerImplementation implements AppManager {
         (note) async => sl.get<DatabaseHelper>().updateNote(note));
 
     insertNoteCommand = RxCommand.createAsync<Note, int>(
-        (note) async => sl.get<DatabaseHelper>().updateNote(note));
+        (note) async => sl.get<DatabaseHelper>().insertNote(note));
 
     deleteNoteCommand = RxCommand.createAsync<Note, int>(
-        (note) async => sl.get<DatabaseHelper>().updateNote(note));
+        (note) async => sl.get<DatabaseHelper>().deleteNote(note.id));
 
     getCountCommand = RxCommand.createAsyncNoParam<int>(
         () async => sl.get<DatabaseHelper>().getCount());
@@ -72,21 +72,24 @@ class AppManagerImplementation implements AppManager {
     updateSearchStringCommand = RxCommand.createSync((s) => s);
 
     updateNoteCommand.listen((onData) {
+      print("updateNoteCommand");
       getNoteListCommand.execute();
     });
 
     insertNoteCommand.listen((onData) {
+      print("insertNoteCommand");
       getNoteListCommand.execute();
     });
 
     deleteNoteCommand.listen((onData) {
+      print("deleteNoteCommand");
       getNoteListCommand.execute();
     });
   }
 
   Future init() async {
     sl.get<DatabaseHelper>().initializeDatabase();
-    
+
     getNoteListCommand();
 
     getNoteListCommand
