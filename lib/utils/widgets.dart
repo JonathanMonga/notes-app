@@ -33,7 +33,7 @@ class _PriorityPickerState extends State<PriorityPicker> {
     double width = MediaQuery.of(context).size.width;
     return SizedBox(
       width: width,
-      height: 60,
+      height: 70,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: 3,
@@ -52,6 +52,7 @@ class _PriorityPickerState extends State<PriorityPicker> {
               child: Container(
                 child: Center(
                   child: Text(priorityText[index],
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                           color: selectedIndex == index
                               ? Colors.white
@@ -65,7 +66,7 @@ class _PriorityPickerState extends State<PriorityPicker> {
                     borderRadius: BorderRadius.circular(8.0),
                     border: selectedIndex == index
                         ? Border.all(width: 2, color: Colors.black)
-                        : Border.all(width: 0,color: Colors.transparent)),
+                        : Border.all(width: 0, color: Colors.transparent)),
               ),
             ),
           );
